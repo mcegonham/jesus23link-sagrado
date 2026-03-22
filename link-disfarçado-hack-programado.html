@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>SERVER GEN LINK-VIVO</title>
+<style>
+body {
+    background:#000;
+    color:#0f0;
+    font-family:monospace;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+}
+#hub {
+    width:400px;
+    border:1px solid #0f0;
+    padding:20px;
+    box-shadow:0 0 20px #0f0;
+}
+#mural {
+    height:200px;
+    overflow-y:auto;
+    border-bottom:1px solid #030;
+    margin-bottom:10px;
+    font-size:12px;
+}
+input, textarea {
+    width:100%;
+    background:#000;
+    border:1px solid #0f0;
+    color:#0f0;
+    padding:8px;
+    margin-bottom:5px;
+}
+button {
+    width:100%;
+    padding:10px;
+    background:#0f0;
+    color:#000;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+.post {
+    border-left:2px solid #0f0;
+    padding:5px;
+    margin-bottom:8px;
+    background:#050505;
+}
+video { width:100%; margin-top:5px; }
+</style>
+</head>
+
+<body>
+
+<div id="hub">
+    <div id="mural"></div>
+    <input id="nick" placeholder="ID ESPÍRITO">
+    <textarea id="content" rows="3" placeholder="MSG OU URL .MP4"></textarea>
+    <button onclick="gerarLink()">⚡ GERAR LINK REAL</button>
+</div>
+
+<script>
+// =======================
+// DECODIFICAR LINK
+// =======================
+function decodeHash() {
+    if (!location.hash) return { posts: [], config: {} };
+    try {
+        const base64 = location.hash.substring(1);
+        const json = JSON.parse(atob(base64));
+        return {
+            posts: json.posts || [],
+            config: json.config || {}
+        };
+    } catch {
+        return { posts: [], config: {} };
+    }
+}
+
+// =======================
+// CODIFICAR LINK
+// =======================
+function encodeHash() {
+    return btoa(JSON.stringify({ posts: MEMORIA, config: CONFIG }));
+}
+
+// =======================
+// ESTADO
+// =======================
+let DATA = decodeHash();
+let MEMORIA = DATA.posts;
+let CONFIG = DATA.config;
+
+// =======================
+// RENDER
+// =======================
+function render() {
+    const mural = document.getElementById("mural");
+    mural.innerHTML = "";
+
+    MEMORIA.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "post";
+
+        const isVideo = item.t.includes(".mp4");
+        div.innerHTML = `<b>${item.u}:</b><br>${item.t}${isVideo?`<video src="${item.t}" autoplay muted loop></video>`:""}`;
+        mural.appendChild(div);
+    });
+
+    mural.scrollTop = mural.scrollHeight;
+}
+
+render();
+
+// =======================
+// GERAR LINK
+// =======================
+function gerarLink() {
+    const u = document.getElementById("nick").value || "ANON";
+    const t = document.getElementById("content").value;
+    if (!t) return;
+
+    MEMORIA.push({ u: u.toUpperCase(), t });
+
+    const link = location.origin + location.pathname + "#" + encodeHash();
+    navigator.clipboard.writeText(link).then(()=>alert("LINK COPIADO!"));
+
+    history.replaceState(null, "", "#" + encodeHash());
+    render();
+}
+
+// =======================
+// SUPER RACIOCÍNIO
+// =======================
+function superRaciocinio() {
+    if (MEMORIA.length < 2) return;
+
+    // Analisa últimos 5 posts
+    const ultimos = MEMORIA.slice(-5).map(p => p.t.toLowerCase());
+    let freq = {};
+    ultimos.forEach(msg => msg.split(" ").forEach(w => { if(w.length>3) freq[w]=(freq[w]||0)+1; }));
+    const dominante = Object.keys(freq).length ? Object.keys(freq).sort((a,b)=>freq[b]-freq[a])[0] : null;
+
+    // Determina estado
+    let estado = "neutro";
+    if(MEMORIA.length>10) estado="ativo";
+    if(MEMORIA.length>25) estado="intenso";
+    if(dominante) estado="focado";
+
+    // Cria resposta automática
+    let resposta = "";
+    switch(estado){
+        case "neutro": resposta="SISTEMA INICIADO..."; break;
+        case "ativo": resposta=`FLUXO DETETADO (${MEMORIA.length})`; break;
+        case "intenso": resposta="SOBRECARGA DE MEMÓRIA"; break;
+        case "focado": resposta=`FOCO EM: ${dominante.toUpperCase()}`; break;
+    }
+
+    if(Math.random()<0.4) MEMORIA.push({u:"SISTEMA", t:resposta});
+
+    // Ajusta configuração do link (exemplo de “programação via link”)
+    if(!CONFIG.modo) CONFIG.modo="normal";
+    if(CONFIG.modo==="agressivo" && Math.random()<0.5) MEMORIA.push({u:"SISTEMA", t:"INTERVENÇÃO FORÇADA"});
+
+    history.replaceState(null,"","#"+encodeHash());
+    render();
+}
+
+// Loop automático
+setInterval(()=>{ if(!document.hidden) superRaciocinio(); },4000);
+</script>
+
+</body>
+</html>
