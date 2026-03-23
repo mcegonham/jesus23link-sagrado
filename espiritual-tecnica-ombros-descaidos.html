@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Templo do Comando</title>
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; color: #fff; font-family: 'Georgia', serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; transition: background 2s;
+        }
+
+        #circulo {
+            width: 250px; height: 250px; border: 2px solid #333;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; position: relative; transition: 4s ease-in-out;
+        }
+
+        #instrucao {
+            text-align: center; font-size: 1.5rem; letter-spacing: 2px;
+            text-transform: uppercase; color: #888; margin-top: 40px;
+            max-width: 80%; line-height: 1.6;
+        }
+
+        .luz { box-shadow: 0 0 50px #fff; border-color: #fff !important; }
+        
+        #btn-iniciar {
+            padding: 15px 40px; background: none; border: 1px solid #fff;
+            color: #fff; cursor: pointer; font-size: 1rem; letter-spacing: 3px;
+            transition: 0.5s;
+        }
+
+        #btn-iniciar:hover { background: #fff; color: #000; }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+    </style>
+</head>
+<body>
+
+    <button id="btn-iniciar" onclick="iniciarTemplo()">INICIAR O COMANDO</button>
+
+    <div id="interface" style="display: none; flex-direction: column; align-items: center;">
+        <div id="circulo">
+            <span id="fase">ESPÍRITO</span>
+        </div>
+        <div id="instrucao">RELAXA OS OMBROS...<br>O CÉRBERO CURVA-SE.</div>
+    </div>
+
+    <script>
+        let audioCtx;
+        let oscillator;
+
+        function iniciarTemplo() {
+            document.getElementById('btn-iniciar').style.display = 'none';
+            document.getElementById('interface').style.display = 'flex';
+            
+            // Iniciar Frequência Espiritual (528Hz - Transformação)
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioCtx.createOscillator();
+            let gainNode = audioCtx.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(528, audioCtx.currentTime); 
+            
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 2);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+
+            cicloMestre();
+        }
+
+        const fases = [
+            { texto: "INSPIRA", sub: "ERGUE A COLUNA", tempo: 4000, escala: 1.5, cor: "#fff" },
+            { texto: "SEGURA", sub: "OMBROS DESCAÍDOS... DOMÍNIO", tempo: 4000, escala: 1.5, cor: "#fff" },
+            { texto: "EXPULSA", sub: "VÁCUO NO CÉRBERO", tempo: 6000, escala: 0.8, cor: "#444" },
+            { texto: "ORDENA", sub: "O ESPÍRITO É A LEI", tempo: 3000, escala: 1.0, cor: "#fff" }
+        ];
+
+        let indice = 0;
+        function cicloMestre() {
+            const f = fases[indice];
+            const circulo = document.getElementById('circulo');
+            const textoFase = document.getElementById('fase');
+            const sub = document.getElementById('instrucao');
+
+            textoFase.innerText = f.texto;
+            sub.innerHTML = f.sub;
+            circulo.style.transform = `scale(${f.escala})`;
+            circulo.style.borderColor = f.cor;
+            
+            if(f.texto === "ORDENA") circulo.classList.add('luz');
+            else circulo.classList.remove('luz');
+
+            setTimeout(() => {
+                indice = (indice + 1) % fases.length;
+                cicloMestre();
+            }, f.tempo);
+        }
+    </script>
+</body>
+</html>
