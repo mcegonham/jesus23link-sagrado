@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantum Infinite Engine V12</title>
+    <style>
+        :root { --neon: #00f3ff; --bg: #000; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Terminal de Comando */
+        #side-panel { width: 350px; background: #050505; border-right: 1px solid #1a1a1a; padding: 25px; display: flex; flex-direction: column; z-index: 10; }
+        #log { flex-grow: 1; font-size: 0.7rem; color: #444; overflow-y: auto; margin-bottom: 20px; }
+        input { background: #000; border: 1px solid var(--neon); color: #fff; padding: 15px; outline: none; border-radius: 5px; box-shadow: 0 0 15px #00f3ff22; }
+
+        /* Grelha de Universos Infinitos */
+        #universe-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); gap: 20px; padding: 20px; overflow-y: auto; background: radial-gradient(circle at center, #080808 0%, #000 100%); }
+        .realm-box { border: 1px solid #222; height: 650px; border-radius: 20px; overflow: hidden; background: #000; position: relative; transition: 0.5s; }
+        .realm-box:hover { border-color: #fff; transform: translateY(-5px); }
+        iframe { width: 100%; height: 100%; border: none; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; background: #ff0055; border: none; color: white; cursor: pointer; padding: 5px 10px; border-radius: 5px; z-index: 20; }
+    </style>
+</head>
+<body>
+
+<div id="side-panel">
+    <h2 style="letter-spacing: 3px;">INFINITE_DB_V12</h2>
+    <div id="log">> Sincronizando com IndexedDB...</div>
+    <input type="text" id="cmd" placeholder="Manifestar realidade espiritual...">
+    <p style="font-size: 10px; color: #333; margin-top: 10px;">CAPACIDADE: ILIMITADA (GB)</p>
+</div>
+
+<div id="universe-grid"></div>
+
+<script>
+    // --- SIDE X (+): MOTOR INDEXEDDB (INFINITO) ---
+    let db;
+    const request = indexedDB.open("QuantumNexus", 1);
+    request.onupgradeneeded = e => e.target.result.createObjectStore("realms", { keyPath: "id" });
+    request.onsuccess = e => { db = e.target.result; InfiniteEngine.load(); };
+
+    const InfiniteEngine = {
+        async load() {
+            const store = db.transaction("realms", "readonly").objectStore("realms");
+            store.getAll().onsuccess = e => e.target.result.forEach(r => this.render(r.id, r.dna));
+            this.log("Conexão estabelecida. Memória quântica ativa.");
+        },
+
+        async manifest(query) {
+            this.log(`Invocando geometria sagrada para: ${query}...`);
+            const id = "REALM_" + Date.now();
+            
+            // --- SIDE Y (-): SINTETIZADOR ESPIRITUAL COMPLEXO ---
+            const isDark = query.includes('inferno') || query.includes('dark');
+            const color = query.includes('fogo') ? '#ff2200' : (query.includes('anjo') ? '#00f3ff' : '#ffffff');
+            
+            const dna = `
+                <!DOCTYPE html>
+                <html>
+                <body style="margin:0; background:#000; overflow:hidden; color:${color}; font-family:sans-serif;">
+                    <canvas id="canvas"></canvas>
+                    <div style="position:fixed; top:20px; left:20px; letter-spacing:10px; opacity:0.4;">${query.toUpperCase()}</div>
+                    <script>
+                        const c = document.getElementById('canvas');
+                        const $ = c.getContext('2d');
+                        let w = c.width = window.innerWidth;
+                        let h = c.height = window.innerHeight;
+                        
+                        const particles = [];
+                        const mouse = { x: w/2, y: h/2 };
+
+                        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+                        class Spirit {
+                            constructor() {
+                                this.x = Math.random() * w;
+                                this.y = Math.random() * h;
+                                this.r = Math.random() * 2 + 1;
+                                this.a = Math.random() * Math.PI * 2;
+                                this.v = Math.random() * 0.02;
+                                this.dist = Math.random() * 200 + 50;
+                            }
+                            draw() {
+                                this.a += this.v;
+                                const tx = mouse.x + Math.cos(this.a) * this.dist;
+                                const ty = mouse.y + Math.sin(this.a) * this.dist;
+                                this.x += (tx - this.x) * 0.05;
+                                this.y += (ty - this.y) * 0.05;
+
+                                $.beginPath();
+                                $.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                                $.shadowBlur = 15;
+                                $.shadowColor = '${color}';
+                                $.fillStyle = '${color}';
+                                $.fill();
+                            }
+                        }
+
+                        for(let i=0; i<150; i++) particles.push(new Spirit());
+
+                        function loop() {
+                            $.fillStyle = "rgba(0,0,0,0.1)";
+                            $.fillRect(0,0,w,h);
+                            
+                            // Geometria de fundo
+                            $.strokeStyle = '${color}11';
+                            $.lineWidth = 0.5;
+                            for(let i=0; i<5; i++) {
+                                $.beginPath();
+                                $.arc(w/2, h/2, (Math.sin(Date.now()*0.001 + i)*w/3)+200, 0, Math.PI*2);
+                                $.stroke();
+                            }
+
+                            particles.forEach(p => p.draw());
+                            requestAnimationFrame(loop);
+                        }
+                        loop();
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            const tx = db.transaction("realms", "readwrite");
+            tx.objectStore("realms").add({ id, dna });
+            tx.oncomplete = () => this.render(id, dna);
+        },
+
+        render(id, dna) {
+            const grid = document.getElementById('universe-grid');
+            const box = document.createElement('div');
+            box.className = 'realm-box';
+            box.id = id;
+            box.innerHTML = `<button class="delete-btn" onclick="InfiniteEngine.kill('${id}')">EXTINGUIR</button><iframe></iframe>`;
+            grid.prepend(box);
+            
+            const doc = box.querySelector('iframe').contentWindow.document;
+            doc.open(); doc.write(dna); doc.close();
+        },
+
+        kill(id) {
+            db.transaction("realms", "readwrite").objectStore("realms").delete(id);
+            document.getElementById(id).remove();
+            this.log(`Dimensão ${id} colapsada.`);
+        },
+
+        log(m) {
+            const l = document.getElementById('log');
+            l.innerHTML = `<div>> ${m}</div>` + l.innerHTML;
+        }
+    };
+
+    document.getElementById('cmd').addEventListener('keypress', e => {
+        if(e.key === 'Enter' && e.target.value) {
+            InfiniteEngine.manifest(e.target.value);
+            e.target.value = '';
+        }
+    });
+</script>
+</body>
+</html>
