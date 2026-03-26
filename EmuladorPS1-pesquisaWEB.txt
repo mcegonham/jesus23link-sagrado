@@ -1,0 +1,31 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# 1. Input do Usuário
+Clear-Host
+Write-Host "🔮 --- INVOCANDO EMULADOR --- 🔮" -ForegroundColor Cyan
+$linkPai = Read-Host "👉 Digite o link alvo (ex: www.google.com)"
+if (-not $linkPai.StartsWith("http")) { $linkPai = "https://" + $linkPai }
+
+# 2. Criar a Janela (Interface de Controle)
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "PS1 Control Panel"
+$form.Size = New-Object System.Drawing.Size(400, 200)
+$form.StartPosition = "CenterScreen"
+
+$label = New-Object System.Windows.Forms.Label
+$label.Text = "O link está sendo aberto no Edge...`nPode fechar esta janela para encerrar."
+$label.AutoSize = $true
+$label.Location = New-Object System.Drawing.Point(50, 50)
+$form.Controls.Add($label)
+
+# 3. Disparar o Navegador Externo (Edge)
+# Se preferir o Chrome, troque "msedge.exe" por "chrome.exe"
+Write-Host "🚀 Lançando navegador moderno..." -ForegroundColor Magent
+Start-Process "msedge.exe" $linkPai
+
+# 4. Exibir a GUI de controle
+$form.ShowDialog()
+
+# Limpeza
+$form.Dispose()
