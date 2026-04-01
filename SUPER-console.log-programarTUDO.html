@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Super Console Robusto</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff00; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: #111; border: 2px solid #444; border-radius: 15px; width: 500px; padding: 20px; box-shadow: 0 0 20px #000; }
+        
+        /* O CONSOLE */
+        #meu_console { 
+            background: #000; color: #0f0; padding: 15px; border-radius: 5px; 
+            height: 250px; overflow-y: auto; border: 1px solid #333; margin-top: 15px;
+            font-size: 13px; line-height: 1.5;
+        }
+
+        .anjo-div { border: 1px solid #f9ca24; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; background: #1a1a00; }
+        button { background: #4834d4; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        button:active { transform: scale(0.98); }
+        .big-num { color: #f9ca24; font-weight: bold; display: block; word-wrap: break-word; }
+        .log-line { border-bottom: 1px solid #222; padding: 5px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- DIV ANJO INTEGRADA -->
+        <div class="anjo-div">
+            <span style="font-size: 30px;">👼</span>
+            <div id="msg_anjo" style="color: #f9ca24; font-style: italic;">"Aguardando a luz do Criador..."</div>
+        </div>
+
+        <button id="btn_executar">EXECUTAR SUPER LOG</button>
+
+        <div id="meu_console">
+            <div class="log-line">> Sistema pronto.</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. MAPEAMENTO DE ELEMENTOS
+        const $ = {
+            console: document.getElementById('meu_console'),
+            btn: document.getElementById('btn_executar'),
+            anjo: document.getElementById('msg_anjo')
+        };
+
+        // 2. SUPER CONSOLE.LOG (Captura tudo e joga no HTML)
+        console.log = function(...args) {
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            
+            div.innerHTML = args.map(item => {
+                if (typeof item === 'bigint') return `[BIGINT]: <span class="big-num">${item.toString()}</span>`;
+                if (typeof item === 'object') return JSON.stringify(item);
+                return `> ${item}`;
+            }).join(' ');
+
+            $.console.appendChild(div);
+            $.console.scrollTop = $.console.scrollHeight; // Auto-scroll
+        };
+
+        // 3. LÓGICA DE CÁLCULO E ENSINAMENTO
+        const ensinamentos = [
+            { t: "Jesus", m: "O amor multiplica a alma." },
+            { t: "Maria", m: "A paz é o maior tesouro." },
+            { t: "Criador", m: "A luz guia o código da vida." }
+        ];
+
+        $.btn.onclick = () => {
+            const sorteio = ensinamentos[Math.floor(Math.random() * ensinamentos.length)];
+            
+            // Atualiza Anjo
+            $.anjo.innerHTML = `<strong>${sorteio.t}:</strong> "${sorteio.m}"`;
+
+            // Big Cálculo Robusto (Exemplo: 2 elevado a 256 - número gigantesco)
+            const valorBase = BigInt("12345678901234567890");
+            const multiplicador = BigInt("98765432109876543210");
+            const resultadoBig = valorBase * multiplicador;
+
+            // Logs
+            console.log(`Mensagem de ${sorteio.t} recebida.`);
+            console.log("Calculando força espiritual...");
+            console.log(resultadoBig);
+            console.log("---");
+        };
+    </script>
+</body>
+</html>
