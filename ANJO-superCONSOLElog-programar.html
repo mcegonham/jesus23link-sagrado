@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>S.O. Programável v6</title>
+    <style>
+        body { font-family: 'Fira Code', monospace; background: #050505; color: #00ff41; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .terminal { background: #000; width: 95%; max-width: 900px; border: 1px solid #333; border-radius: 8px; box-shadow: 0 0 40px #000; }
+        #meu_console { height: 450px; overflow-y: auto; padding: 20px; font-size: 14px; border-bottom: 1px solid #222; }
+        .input-line { display: flex; padding: 15px; background: #0a0a0a; }
+        #prompt { background: transparent; border: none; color: #fff; flex: 1; outline: none; font-size: 16px; font-family: inherit; }
+        .anjo-header { background: #111; padding: 10px 20px; color: #f9ca24; font-size: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
+        .big-res { color: #f9ca24; font-weight: bold; word-break: break-all; }
+        .cmd-echo { color: #555; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="terminal">
+        <div class="anjo-header">
+            <span>👼 ANJO PROGRAMADOR: "O código cria mundos."</span>
+            <span id="status">SISTEMA ONLINE</span>
+        </div>
+
+        <div id="meu_console">
+            <div style="color: #888;">// Digita código JS puro para injetar no sistema.</div>
+            <div style="color: #888;">// Exemplo: const x = BigInt(2) ** BigInt(100); console.log(x);</div>
+        </div>
+
+        <div class="input-line">
+            <span style="color: #f9ca24; margin-right: 10px;">λ</span>
+            <input type="text" id="prompt" placeholder="Programa aqui..." autofocus autocomplete="off">
+        </div>
+    </div>
+
+    <script id="runtime_script">
+        // 1. MAPEAMENTO
+        const $ = {
+            console: document.getElementById('meu_console'),
+            input: document.getElementById('prompt'),
+            status: document.getElementById('status')
+        };
+
+        // 2. SUPER CONSOLE (Captura logs reais do sistema)
+        const originalLog = console.log;
+        console.log = function(...args) {
+            const linha = document.createElement('div');
+            linha.style.margin = "5px 0";
+            linha.innerHTML = args.map(arg => {
+                if (typeof arg === 'bigint') return `<span class="big-res">${arg.toString()}n</span>`;
+                if (typeof arg === 'object') return `<pre style="color:#5dade2">${JSON.stringify(arg, null, 2)}</pre>`;
+                return `<span>${arg}</span>`;
+            }).join(' ');
+            $.console.appendChild(linha);
+            $.console.scrollTop = $.console.scrollHeight;
+            originalLog.apply(console, args);
+        };
+
+        // 3. O MOTOR DE INJEÇÃO (PROGRAMAÇÃO REAL)
+        $.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const codigo = $.input.value;
+                if (!codigo) return;
+
+                // Eco do comando
+                const echo = document.createElement('div');
+                echo.className = 'cmd-echo';
+                echo.innerText = `> ${codigo}`;
+                $.console.appendChild(echo);
+
+                try {
+                    // INJEÇÃO DIRETA NO DOM (Isso torna o código persistente)
+                    const scriptTag = document.createElement('script');
+                    scriptTag.text = `try { ${codigo} } catch(e) { console.log("<span style='color:red'>Erro: " + e.message + "</span>") }`;
+                    document.head.appendChild(scriptTag);
+                    
+                    $.status.innerText = "CÓDIGO INJETADO";
+                    $.status.style.color = "#00ff41";
+                } catch (err) {
+                    console.log("Erro de Sintaxe: " + err.message);
+                    $.status.innerText = "FALHA NO SCRIPT";
+                    $.status.style.color = "red";
+                }
+
+                $.input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
