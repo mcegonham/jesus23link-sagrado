@@ -1,0 +1,5 @@
+<body style="background:#050505;color:#0f4;font-family:monospace;display:flex;flex-direction:column;height:100vh;margin:0" id="b">
+  <div id="c" style="flex:1;overflow:auto;padding:30px;white-space:pre-wrap;font-size:18px;line-height:1.5">// Terminal Ampliado. Digite JS e Enter:</div>
+  <input id="i" autofocus style="background:#111;color:#f9ca24;border:none;padding:20px;outline:none;font-size:20px;border-top:1px solid #333" onkeydown="if(event.key=='Enter'){const v=this.value; console.log('> '+v); try{const r=eval(v); if(r!==undefined)console.log(r)}catch(e){console.log('Error: '+e.message)}; this.value=''}">
+  <script>console.log = (...args) => { const d=document.createElement('div'); d.innerHTML=args.join(' '); c.appendChild(d); c.scrollTop=c.scrollHeight; }</script>
+</body>
