@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal de Programação Sagrada</title>
+    <style>
+        body { margin: 0; background: #050505; color: gold; font-family: 'Courier New', monospace; overflow: hidden; }
+        #interface { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; gap: 15px; }
+        
+        /* Input de Invocação */
+        #altar-salvamento {
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #333;
+            color: gold;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            border-radius: 50px;
+            width: 300px;
+            margin: 0 auto;
+            outline: none;
+            transition: 0.5s;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+        }
+        #altar-salvamento:focus { border-color: gold; box-shadow: 0 0 20px gold; }
+
+        .editores { display: flex; gap: 15px; flex: 1; }
+        textarea { 
+            flex: 1; background: rgba(10, 10, 10, 0.8); color: #00ffcc; 
+            border: 1px solid #444; padding: 15px; border-radius: 10px; resize: none;
+        }
+        iframe { flex: 1; background: white; border-radius: 10px; border: none; }
+        
+        canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<canvas id="particulas"></canvas>
+
+<div id="interface">
+    <!-- O Input Sagrado para Salvar -->
+    <input type="text" id="altar-salvamento" placeholder="Escreva 'jesus' para salvar...">
+
+    <div class="editores">
+        <textarea id="html" placeholder="HTML (Cria um id para ver a magia)"></textarea>
+        <textarea id="css" placeholder="CSS (Aura)"></textarea>
+        <textarea id="js" placeholder="JS (Espírito)"></textarea>
+    </div>
+    
+    <iframe id="preview"></iframe>
+</div>
+
+<script>
+const htmlIn = document.getElementById('html');
+const cssIn = document.getElementById('css');
+const jsIn = document.getElementById('js');
+const altar = document.getElementById('altar-salvamento');
+const preview = document.getElementById('preview');
+
+// --- 1. SUPER FUNCTION: AUTO BY ID & CSS ---
+function manifestar() {
+    let htmlVal = htmlIn.value;
+    let cssVal = cssIn.value;
+    let jsVal = jsIn.value;
+
+    const idRegex = /id=["']([^"']+)["']/g;
+    let m;
+    while ((m = idRegex.exec(htmlVal)) !== null) {
+        const id = m[1];
+        // Cria ById automático se não existir
+        if (!jsVal.includes(`document.getElementById('${id}')`)) {
+            jsIn.value += `\nconst ${id}El = document.getElementById('${id}');`;
+            cssIn.value += `\n#${id} { /* Inovação: ID Detectado */ \n  border: 1px shadow gold;\n}`;
+        }
+    }
+    
+    preview.srcdoc = htmlVal + `<style>${cssIn.value}</style>` + `<script>${jsIn.value}<\/script>`;
+}
+
+// --- 2. O RITUAL DE SALVAMENTO (INVOCAÇÃO) ---
+altar.addEventListener('input', () => {
+    if (altar.value.toLowerCase() === "jesus") {
+        const projeto = {
+            html: htmlIn.value,
+            css: cssIn.value,
+            js: jsIn.value,
+            data: new Date()
+        };
+        
+        // Salva no "Server Local" (LocalStorage do dispositivo)
+        localStorage.setItem('projeto_sagrado', JSON.stringify(projeto));
+        
+        // Efeito Visual: O Altar brilha
+        altar.style.backgroundColor = "gold";
+        altar.style.color = "black";
+        document.body.style.boxShadow = "inset 0 0 100px gold";
+        
+        setTimeout(() => {
+            altar.value = "";
+            altar.style.backgroundColor = "";
+            altar.style.color = "gold";
+            document.body.style.boxShadow = "none";
+            alert("O código foi imortalizado no seu dispositivo (USB/DB).");
+        }, 1000);
+    }
+});
+
+// Partículas e Listeners
+[htmlIn, cssIn, jsIn].forEach(t => t.addEventListener('input', manifestar));
+
+// Animação de Fundo
+const cvs = document.getElementById('particulas');
+const ctx = cvs.getContext('2d');
+cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+let pArray = [];
+class Particle {
+    constructor() {
+        this.x = Math.random() * cvs.width;
+        this.y = Math.random() * cvs.height;
+        this.s = Math.random() * 2;
+    }
+    update() { this.y -= 0.5; if(this.y < 0) this.y = cvs.height; }
+    draw() { ctx.fillStyle = "rgba(255,215,0,0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
+}
+for(let i=0; i<100; i++) pArray.push(new Particle());
+function anim() { 
+    ctx.clearRect(0,0,cvs.width,cvs.height); 
+    pArray.forEach(p => { p.update(); p.draw(); }); 
+    requestAnimationFrame(anim); 
+}
+anim();
+</script>
+</body>
+</html>
